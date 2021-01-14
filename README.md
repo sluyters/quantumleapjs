@@ -65,7 +65,7 @@ Remove all listeners attached to an event. If `type` is omitted, all listeners a
 
   * `type` - **'frame' | 'gesture' | 'connect' | 'disconnect' | 'error'** - The type of event. If omitted, all listeners will be removed for all events.
 
-### connect([addr='ws://127.0.0.1:6442'])
+### connect([addr])
 Connect to the QuantumLeap framework.
 
   * `addr` - **string** - *Default: 'ws://127.0.0.1:6442'* - The address of a running instance of QuantumLeap framework.
@@ -126,10 +126,10 @@ gestureHandler.registerGestures('dynamic', ['left swipe', 'right swipe']);
 gestureHandler.registerGestures('static', 'thumb up');
 
 gestureHandler.addEventListener('gesture', (event) => {
-  if (event.type === 'dynamic') {
+  if (event.gesture.type === 'dynamic') {
     console.log('Dynamic gesture detected.');
   }
-  if (event.name === 'thumb up') {
+  if (event.gesture.name === 'thumb up') {
     console.log('Like');
   }
 });
