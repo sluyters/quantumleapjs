@@ -1,5 +1,7 @@
-# GestureHandler
-## Contents
+GestureHandler
+==============
+Contents
+--------
   * [Overview](#overview)
   * [Constructor](#constructor)
   * [Methods](#methods)
@@ -7,15 +9,16 @@
   * [Examples](#examples)
   * [Useful repositories](#useful-repositories)
 
-## Overview
+Overview
+--------
 This object allows you to connect to the QuantumLeap framework and call functions based on events from QuantumLeap.
 
 ```javascript
 import GestureHandler from 'quantumleapjs' 
 ```
 
-## Constructor
---------------
+Constructor
+-----------
 ```javascript
 new GestureHandler([options]);
 ```
@@ -26,18 +29,13 @@ Options can be passed as a parameter at instantiation:
 let gestureHandler = new GestureHandler({ timeout: 5000, requireRegistration: false });
 ```
 
-#### `timeout` - **integer** - *Default: 10000*
-The maximum time in milliseconds to wait for a connection to succeed before closing and retrying.
-
-#### `interval` - **boolean** - *Default: 3000*
-The number of milliseconds between two reconnection attempts.
-
-#### `requireRegistration` - **boolean** - *Default: true*
-If set to *true*, `gesture` events are only triggered for recognized gesture that have been registered using the `registerGesture` method. If set to *false*, `gesture` events are triggered for any recognized gestures.
+  * `timeout` - **integer** - *Default: 10000* - The maximum time in milliseconds to wait for a connection to succeed before closing and retrying.
+  * `interval` - **boolean** - *Default: 3000* - The number of milliseconds between two reconnection attempts.
+  * `requireRegistration` - **boolean** - *Default: true* - If set to *true*, `gesture` events are only triggered for recognized gesture that have been registered using the `registerGesture` method. If set to *false*, `gesture` events are triggered for any recognized gestures.
 
 
-## Methods
-----------
+Methods
+-------
 ### `registerGestures(type, names)`
 Register gestures to the QuantumLeap framework. If `requireRegistration` is set to *true*, `gesture` events are triggered for each registered gesture.
 
@@ -76,8 +74,8 @@ Connect to the QuantumLeap framework.
 Disconnect from the QuantumLeap framework.
 
 
-## Events
----------
+Events
+------
 ### frame
 Emitted when a frame is received from the QuantumLeap framework.
 
@@ -110,8 +108,8 @@ Emitted when a connection error with the QuantumLeap framework occurs.
 #### Properties
   * `Event.message` - A message describing the event.
 
-## Examples
------------
+Examples
+--------
 ```javascript
 import GestureHandler from 'quantumleapjs' 
 
@@ -132,8 +130,8 @@ gestureHandler.addEventListener('gesture', (event) => {
 gestureHandler.connect();
 ```
     
-## Useful repositories
-----------------------
+Useful repositories
+-------------------
 * [QuantumLeap](https://github.com/sluyters/QuantumLeap): the QuantumLeap framework.
 * [LeapGesturePlayback](https://github.com/sluyters/LeapGesturePlayback): a simple tool for recording and playing gestures with the Leap Motion Controller.
 * [LUI project](https://github.com/sluyters/LUI): a QuantumLeap-enabled application for browsing multimedia contents.
