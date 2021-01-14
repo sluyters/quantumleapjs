@@ -20,14 +20,9 @@ Options can be passed as a parameter at instantiation:
 let gestureHandler = new GestureHandler({ timeout: 5000, requireRegistration: false });
 ```
 
-#### `timeout` - **integer** - *Default: 10000*
-The maximum time in milliseconds to wait for a connection to succeed before closing and retrying.
-
-#### `interval` - **boolean** - *Default: 3000*
-The number of milliseconds between two reconnection attempts.
-
-#### `requireRegistration` - **boolean** - *Default: true*
-If set to *true*, `gesture` events are only triggered for recognized gesture that have been registered using the `registerGesture` method. If set to *false*, `gesture` events are triggered for any recognized gestures.
+  * `timeout` - **integer** - *Default: 10000* - The maximum time in milliseconds to wait for a connection to succeed before closing and retrying.
+  * `interval` - **boolean** - *Default: 3000* - The number of milliseconds between two reconnection attempts.
+  * `requireRegistration` - **boolean** - *Default: true* - If set to *true*, `gesture` events are only triggered for recognized gesture that have been registered using the `registerGesture` method. If set to *false*, `gesture` events are triggered for any recognized gestures.
 
 
 Methods
