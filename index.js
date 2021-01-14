@@ -139,16 +139,22 @@ class GestureHandler {
     // Handle messages from the server
     this._client.onmessage = (e) => {
       let msg = JSON.parse(e.data);
-      if (msg.type === 'data') {
-        for (const dataMsg of msg.data) {
-          if (dataMsg.type === 'frame') {
-            // Frame
-            let event = new FrameEvent(dataMsg.data);
-            this._eventListeners.frame.forEach(fn => fn(event));
-          } else if (dataMsg.type === 'static' || dataMsg.type === 'dynamic') {
+      if (msg.type === 'data' && msg.data.length > 0) {
+        let frame = {};
+        let i = 0;
+        if (msg.data[i].type === 'frame') {
+          // Frame
+          frame = msg.data[i].data;
+          let event = new FrameEvent(frame);
+          this._eventListeners.frame.forEach(fn => fn(event));
+          i++;
+        }
+        for (; i < msg.data.length; i++) {
+          let data = msg.data[i];
+          if (data.type === 'static' || data.type === 'dynamic') {
             // Gesture
-            let event = new GestureEvent(dataMsg.type, dataMsg.name, dataMsg.data);
-            if (!this.requireRegistration || this._registeredGestures[dataMsg.type].includes(dataMsg.name)) {
+            let event = new GestureEvent({ type: data.type, name: data.name, data: data.data }, frame);
+            if (!this.requireRegistration || this._registeredGestures[data.type].includes(data.name)) {
               this._eventListeners.gesture.forEach(fn => fn(event));
             }
           }
@@ -217,8 +223,8 @@ class GestureHandler {
 
 // Events
 class FrameEvent {
-  constructor(data) {
-    this.data = data;
+  constructor(frame = {}) {
+    this.frame = frame;
   }
   toString() {
     return JSON.stringify(this.data);
@@ -226,10 +232,10 @@ class FrameEvent {
 }
 
 class GestureEvent {
-  constructor(type, name, data) {
-    this.type = type;
-    this.name = name;
-    this.data = data;
+  constructor(gesture = {}, frame = {}) {
+    this.type = 'gesture';
+    this.gesture = gesture;
+    this.frame = frame
   }
   toString() {
     return `${this.type} - ${this.name} - ${JSON.stringify(this.data)}`;
@@ -238,6 +244,7 @@ class GestureEvent {
 
 class ConnectEvent {
   constructor(message) {
+    this.type = 'connect';
     this.message = message;
   }
   toString() {
@@ -247,6 +254,7 @@ class ConnectEvent {
 
 class DisconnectEvent {
   constructor(message) {
+    this.type = 'disconnect';
     this.message = message;
   }
   toString() {
@@ -256,6 +264,7 @@ class DisconnectEvent {
 
 class ErrorEvent {
   constructor(message) {
+    this.type = 'error';
     this.message = message;
   }
   toString() {

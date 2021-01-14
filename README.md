@@ -36,41 +36,41 @@ let gestureHandler = new GestureHandler({ timeout: 5000, requireRegistration: fa
 
 Methods
 -------
-### `registerGestures(type, names)`
+### registerGestures(type, names)
 Register gestures to the QuantumLeap framework. If `requireRegistration` is set to *true*, `gesture` events are triggered for each registered gesture.
 
   * `type` - **'static' | 'dynamic'** - The type of the gesture(s) to register.
   * `names` - **string | string[]** - The name(s) of the gesture(s) to register.
 
-### `unregisterGestures(type, names)`
+### unregisterGestures(type, names)
 Unregister gestures from the QuantumLeap framework. If `requireRegistration` is set to *true*, `gesture` events will not be triggered anymore for unregistered gestures.
 
   * `type` - **'static' | 'dynamic'** - The type of the gesture(s) to unregister.
   * `names` - **string | string[]** - The name(s) of the gesture(s) to unregister.
 
-### `addEventListener(type, listener)`
+### addEventListener(type, listener)
 Attach a listener function to an event. The listener will be triggered each time the event occurs. Any number of listeners can be attached to an event.
 
   * `type` - **'frame' | 'gesture' | 'connect' | 'disconnect' | 'error'** - The type of event.
   * `listener` - **function** - A listener function.
 
-### `removeEventListener(type, listener)`
+### removeEventListener(type, listener)
 Remove a listener attached to an event.
 
   * `type` - **'frame' | 'gesture' | 'connect' | 'disconnect' | 'error'** - The type of event.
   * `listener` - **function** - The listener function to remove.
 
-### `removeEventListeners([type])`
+### removeEventListeners([type])
 Remove all listeners attached to an event. If `type` is omitted, all listeners attached to all events will be removed.
 
   * `type` - **'frame' | 'gesture' | 'connect' | 'disconnect' | 'error'** - The type of event. If omitted, all listeners will be removed for all events.
 
-### `connect([addr='ws://127.0.0.1:6442'])`
+### connect([addr='ws://127.0.0.1:6442'])
 Connect to the QuantumLeap framework.
 
   * `addr` - **string** - *Default: 'ws://127.0.0.1:6442'* - The address of a running instance of QuantumLeap framework.
 
-### `disconnect()`
+### disconnect()
 Disconnect from the QuantumLeap framework.
 
 
@@ -80,32 +80,39 @@ Events
 Emitted when a frame is received from the QuantumLeap framework.
 
 #### Properties
-  * `Event.data` - Data corresponding to the frame.
+  * `Event.type` - The type of event.
+  * `Event.frame` - Data corresponding to the current frame.
 
 ### gesture
 Emitted when a gesture is recognized by the QuantumLeap framework. If `requireRegistration` was set to *true*, an event is emitted only is the recognized gesture was previously registered. Otherwise, an event is emitted for any recognized gesture.
 
 #### Properties
-  * `Event.type` - The type of the recognized.
-  * `Event.name` - The name of the recognized.
-  * `Event.data` - Data corresponding to the gesture.
+  * `Event.type` - The type of event.
+  * `Event.gesture` - Data corresponding to the recognized gesture.
+    * `Event.gesture.type` - The type of the recognized gesture.
+    * `Event.gesture.name` - The name of the recognized gesture.
+    * `Event.gesture.data` - Additional data corresponding to the recognized gesture.
+  * `Event.frame` - Data corresponding to the current frame.
 
 ### connect
 Emitted after the connection with the QuantumLeap framework.
 
 #### Properties
+  * `Event.type` - The type of event.
   * `Event.message` - A message describing the event.
 
 ### disconnect
 Emitted when a disconnection with the QuantumLeap framework occurs.
 
 #### Properties
+  * `Event.type` - The type of event.
   * `Event.message` - A message describing the event.
 
 ### error
 Emitted when a connection error with the QuantumLeap framework occurs.
 
 #### Properties
+  * `Event.type` - The type of event.
   * `Event.message` - A message describing the event.
 
 Examples
