@@ -1,20 +1,15 @@
 GestureHandler
 ==============
-Contents
---------
-  * [Overview](#overview)
   * [Constructor](#constructor)
   * [Methods](#methods)
   * [Events](#events)
   * [Examples](#examples)
   * [Useful repositories](#useful-repositories)
 
-Overview
---------
 This object allows you to connect to the QuantumLeap framework and call functions based on events from QuantumLeap.
 
 ```javascript
-import GestureHandler from 'quantumleapjs' 
+import GestureHandler from 'quantumleapjs';
 ```
 
 Constructor
