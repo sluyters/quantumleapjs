@@ -114,7 +114,8 @@ class GestureHandler extends EventEmitter {
     };
     // Handle errors
     this._client.onerror = (e) => {
-      this.emit('error', new ErrorEvent(e))
+      console.error('Connection closed unexpectedly.')
+      //this.emit('error', new ErrorEvent(e))
     }
     // Handle close
     this._client.onclose = (e) => {
@@ -182,7 +183,6 @@ class FrameEvent {
 
 class GestureEvent {
   constructor(gesture = {}, frame = {}) {
-    this.type = 'gesture';
     this.gesture = gesture;
     this.frame = frame
   }
@@ -193,7 +193,6 @@ class GestureEvent {
 
 class ConnectEvent {
   constructor(message) {
-    this.type = 'connect';
     this.message = message;
   }
   toString() {
@@ -203,7 +202,6 @@ class ConnectEvent {
 
 class DisconnectEvent {
   constructor(message) {
-    this.type = 'disconnect';
     this.message = message;
   }
   toString() {
