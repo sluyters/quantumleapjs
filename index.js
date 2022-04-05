@@ -1,23 +1,26 @@
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import ReconnectingWebSocket from 'reconnecting-websocket';
-import EventEmitter from 'events';
 
-/**
- * @extends EventEmitter
- */
-class GestureHandler extends EventEmitter {
+class GestureHandler {
   /**
-   * @constructor
+   * Constructor.
    * @param {Object} [options] - A list of options.
    * @param {number} [options.timeout=10000] - The maximum time in milliseconds to wait for a connection to succeed before closing and retrying.
    * @param {number} [options.interval=3000] - The number of milliseconds between two reconnection attempts.
    * @param {boolean} [options.requireRegistration=true] - If set to true, gesture events are only triggered for recognized gesture that have been registered using the registerGesture method. If set to false, gesture events are triggered for any recognized gestures.
    */
   constructor({ timeout = 10000, interval = 3000, requireRegistration = true } = {}) {
-    super();
     this.timeout = timeout;
     this.interval = interval;
     this.requireRegistration = requireRegistration;
+    // Save callbacks for frames, static and dynamic gestures
+    this._eventListeners = {
+      frame: [],
+      gesture: [],
+      connect: [],
+      disconnect: [],
+      error: [],
+    };
     this._registeredGestures = {
       static: [],
       dynamic: [],
@@ -68,6 +71,53 @@ class GestureHandler extends EventEmitter {
   }
 
   /**
+   * Callback function.
+   * @callback eventListener
+   * @param {Object} event An event.
+   */
+
+  /**
+   * Add a listener function that is called each time an event occurs.
+   * @param {'frame' | 'gesture' | 'connect' | 'disconnect' | 'error'} type - The type of event.
+   * @param {eventListener} listener - A listener function.
+   */
+  addEventListener(type, listener) {
+    if (this._eventListeners.hasOwnProperty(type)) {
+      this._eventListeners[type].push(listener);
+    }
+  }
+
+  /**
+   * Remove a listener function.
+   * @param {'frame' | 'gesture' | 'connect' | 'disconnect' | 'error'} type - The type of event.
+   * @param {eventListener} listener - The listener function to remove.
+   */
+  removeEventListener(type, listener) {
+    console.log(type, listener)
+    console.log(this._eventListeners)
+    if (this._eventListeners.hasOwnProperty(type)) {
+      this._eventListeners[type] = this._eventListeners[type].filter(elem => elem !== listener);
+    }
+    console.log(this._eventListeners)
+  }
+
+  /**
+   * Remove all listeners. If an event type is provided, only the listeners for
+   * this event are removed.
+   * @param {'frame' | 'gesture' | 'connect' | 'disconnect' | 'error'} [type] - The type of event.
+   */
+  removeEventListeners(type) {
+    console.log(type, listener)
+    if (type === undefined) {
+      Object.keys(this._eventListeners).forEach((event) => {
+        this._eventListeners[event] = [];
+      })
+    } else if (this._eventListeners[type]) {
+      this._eventListeners[type] = [];
+    }
+  }
+
+  /**
    * Connect to the QuantumLeap framework.
    * @param {string} [addr='ws://127.0.0.1:6442'] - The address of a running instance of QuantumLeap framework.
    */
@@ -84,7 +134,8 @@ class GestureHandler extends EventEmitter {
     // Handle connection opened
     this._client.onopen = () => {
       this._connected = true;
-      this.emit('connect', new ConnectEvent())
+      let event = new ConnectEvent();
+      this._eventListeners.connect.forEach(fn => fn(event));
       // Register static and dynamic gestures
       this._registerGestures('static', this._registeredGestures.static);
       this._registerGestures('dynamic', this._registeredGestures.dynamic);
@@ -98,15 +149,17 @@ class GestureHandler extends EventEmitter {
         if (msg.data[i].type === 'frame') {
           // Frame
           frame = msg.data[i].data;
-          this.emit('frame', new FrameEvent(frame))
+          let event = new FrameEvent(frame);
+          this._eventListeners.frame.forEach(fn => fn(event));
           i++;
         }
         for (; i < msg.data.length; i++) {
           let data = msg.data[i];
           if (data.type === 'static' || data.type === 'dynamic') {
             // Gesture
+            let event = new GestureEvent({ type: data.type, name: data.name, data: data.data }, frame);
             if (!this.requireRegistration || this._registeredGestures[data.type].includes(data.name)) {
-              this.emit('gesture', new GestureEvent({ type: data.type, name: data.name, data: data.data }, frame));
+              this._eventListeners.gesture.forEach(fn => fn(event));
             }
           }
         }
@@ -114,13 +167,14 @@ class GestureHandler extends EventEmitter {
     };
     // Handle errors
     this._client.onerror = (e) => {
-      console.error('Connection closed unexpectedly.')
-      //this.emit('error', new ErrorEvent(e))
+      let event = new ErrorEvent(e);
+      this._eventListeners.error.forEach(fn => fn(event));
     }
     // Handle close
     this._client.onclose = (e) => {
       this._connected = false
-      this.emit('disconnect', new DisconnectEvent(e));
+      let event = new DisconnectEvent(e);
+      this._eventListeners.disconnect.forEach(fn => fn(event));
     }
   }
 
@@ -183,6 +237,7 @@ class FrameEvent {
 
 class GestureEvent {
   constructor(gesture = {}, frame = {}) {
+    this.type = 'gesture';
     this.gesture = gesture;
     this.frame = frame
   }
@@ -193,6 +248,7 @@ class GestureEvent {
 
 class ConnectEvent {
   constructor(message) {
+    this.type = 'connect';
     this.message = message;
   }
   toString() {
@@ -202,6 +258,7 @@ class ConnectEvent {
 
 class DisconnectEvent {
   constructor(message) {
+    this.type = 'disconnect';
     this.message = message;
   }
   toString() {
