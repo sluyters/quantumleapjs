@@ -93,12 +93,9 @@ class GestureHandler {
    * @param {eventListener} listener - The listener function to remove.
    */
   removeEventListener(type, listener) {
-    console.log(type, listener)
-    console.log(this._eventListeners)
     if (this._eventListeners.hasOwnProperty(type)) {
       this._eventListeners[type] = this._eventListeners[type].filter(elem => elem !== listener);
     }
-    console.log(this._eventListeners)
   }
 
   /**
@@ -107,7 +104,6 @@ class GestureHandler {
    * @param {'frame' | 'gesture' | 'connect' | 'disconnect' | 'error'} [type] - The type of event.
    */
   removeEventListeners(type) {
-    console.log(type, listener)
     if (type === undefined) {
       Object.keys(this._eventListeners).forEach((event) => {
         this._eventListeners[event] = [];
@@ -276,4 +272,4 @@ class ErrorEvent {
   }
 }
 
-export default GestureHandler
+export default GestureHandler;
